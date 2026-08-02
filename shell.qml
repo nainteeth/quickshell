@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Services.SystemTray
+import Quickshell.Services.UPower
 
 ShellRoot {
     QtObject {
@@ -19,6 +20,8 @@ ShellRoot {
         property int barHeight: 32
         property int trayIconSize: 22
         property int workspaceIconSize: 32
+
+        property var locale: Qt.locale("de_DE")
     }
     Variants {
         model: Quickshell.screens
@@ -70,11 +73,10 @@ ShellRoot {
                 // Clock
                 Text {
                     id: clockText
-                    property var locale: Qt.locale("de_DE")
                     color: "#ffffff"
                     font.pixelSize: 14
                     font.bold: true
-                    text: new Date().toLocaleString(locale, "ddd d MMM hh:mm")
+                    text: new Date().toLocaleString(attributes.locale, "ddd d MMM hh:mm")
                 }
 
                 // Right side
@@ -110,7 +112,7 @@ ShellRoot {
                 interval: 1000
                 running: true
                 repeat: true
-                onTriggered: clockText.text = new Date().toLocaleString(locale, "ddd d MMM hh:mm")
+                onTriggered: clockText.text = new Date().toLocaleString(attributes.locale, "ddd d MMM hh:mm")
             }
         }
     }
