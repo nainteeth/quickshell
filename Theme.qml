@@ -6,7 +6,9 @@ QtObject {
     property color barColor: "#000000"
     property color textColor: "#C0C0C0"
     property color inactiveTextColor: "#888888"
-    property int barHeight: 32
+    property color backgroundColor: "#000000"
+    property color borderColor: "#ffffff"
+    property int barHeight: 24
     property int trayIconSize: 22
     property int workspaceIconSize: 32
     property int batteryTextSize: 22

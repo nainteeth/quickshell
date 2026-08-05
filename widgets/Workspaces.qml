@@ -9,7 +9,6 @@ Pill {
     Row {
         id: workspacesRow
         spacing: 12
-        anchors.centerIn: parent
         Repeater {
             model: Hyprland.workspaces.values.filter(ws => ws.monitor == Hyprland.monitorFor(screen))
             MouseArea {

@@ -21,33 +21,66 @@ ShellRoot {
                 right: true
             }
 
-            implicitHeight: Theme.barHeight
-            color: Theme.barColor // background color
+            implicitHeight: 400 // height reserved for widgets
+            exclusiveZone: Theme.barHeight + 8 // height for the actual bar. 8 is the top margin of the bar
+            color: "transparent" // background color
+            mask: Region {
+                item: barRow
+            }
 
-            RowLayout {
+            MouseArea {
                 anchors.fill: parent
+                visible: GlobalState.expandedWidget != ""
+                onClicked: GlobalState.expandedWidget = ""
+                z: -1  // magic
+            }
+
+            Item {
+                id: barRow
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.leftMargin: 12
                 anchors.rightMargin: 12
+                anchors.topMargin: 8
+                height: childrenRect.height
 
                 // Left side
-                Workspaces {
-                    screen: modelData
-                }
+                RowLayout {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
 
-                Item {
-                    Layout.fillWidth: true
+                    Workspaces {
+                        screen: modelData
+                        Layout.alignment: Qt.AlignTop
+                        Layout.preferredHeight: Theme.barHeight
+                    }
                 }
 
                 // Middle side
-                Clock {}
+                RowLayout {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
 
-                Item {
-                    Layout.fillWidth: true
+                    Clock {
+                        Layout.alignment: Qt.AlignTop
+                    }
                 }
 
                 // Right side
-                Battery {}
-                Tray {}
+                RowLayout {
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+
+                    Battery {
+                        Layout.alignment: Qt.AlignTop
+                    }
+
+                    Tray {
+                        Layout.alignment: Qt.AlignTop
+                        Layout.preferredHeight: Theme.barHeight
+                    }
+                }
             }
         }
     }
