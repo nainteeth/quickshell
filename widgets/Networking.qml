@@ -7,11 +7,12 @@ import "../components"
 ExpandablePill {
     id: networkPill
     widgetName: "network"
-    Component.onCompleted: console.log("network widget created")
-
     expandedHeight: 600
     expandedWidth: 220
-    collapsedWidth: unexpNetworkText.width + 24
+    collapsedWidth: networkRow.width + 24
+
+    property var activeNetworkSSID
+    property int activeNetworkSignalStrength
 
     Column {
         width: networkPill.isExpanded ? (networkPill.width - 24) : implicitWidth
@@ -20,27 +21,27 @@ ExpandablePill {
 
         // Unexpanded state
         Row {
+            id: networkRow
+            spacing: 6
             Text {
                 id: currentNetworkSignalStrength
                 visible: !networkPill.isExpanded
                 color: Theme.textColor
                 font.pixelSize: 14
                 font.bold: true
-                // text: {
-                //     let signal = ??; // how do i grab the signal strenght of the current network?
+                text: {
+                    let signal = networkPill.activeNetworkSignalStrength;
 
-                //     if (signal >= ???)
-                //         return "󰣺";
-                //     if (signal >= ???)
-                //         return "󰣸";
-                //     if (signal >= ???)
-                //         return "󰣶";
-                //     if (signal >= ???)
-                //         return "󰣴";
-                //     if (network disabled = true) // something like that
-                //         return "󰣼";
-                //     return "󰣽";
-                // }
+                    if (signal >= 80)
+                        return "󰣺";
+                    if (signal >= 60)
+                        return "󰣸";
+                    if (signal >= 40)
+                        return "󰣶";
+                    if (signal >= 20)
+                        return "󰣴";
+                    return "󰣽";
+                }
             }
             Text {
                 id: unexpNetworkText
@@ -48,7 +49,7 @@ ExpandablePill {
                 color: Theme.textColor
                 font.pixelSize: 14
                 font.bold: true
-                // text: // the currently connected network should be displayed here aswell as its signal strength as an icon. Therefore i use a Row.
+                text: networkPill.activeNetworkSSID
             }
         }
 
@@ -59,13 +60,27 @@ ExpandablePill {
             color: Theme.textColor
             font.pixelSize: 14
         }
+
         Process {
             id: networkProcess
             running: true
-            command: ["nmcli", "-t", "-f", "active,ssid,signal", "dev", "wifi", "list"]
+            command: ["env", "LC_ALL=C", "nmcli", "-t", "-f", "active,ssid,signal", "dev", "wifi", "list"]
             stdout: StdioCollector {
-                onStreamFinished: expNetworkText.text = text
+                onStreamFinished: {
+                    let lines = text.split("\n");
+                    let activeLine = lines.find(line => line.startsWith("yes:"));
+                    let parts = activeLine.split(":");
+                    // parts[0] = "yes", parts[1] = SSID, parts[2] = signal
+                    networkPill.activeNetworkSSID = parts[1];
+                    networkPill.activeNetworkSignalStrength = parseInt(parts[2]);
+                }
             }
+        }
+        Timer {
+            interval: 5000
+            running: true
+            repeat: true
+            onTriggered: networkProcess.running = true
         }
     }
 }

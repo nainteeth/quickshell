@@ -81,7 +81,7 @@ ShellRoot {
 
                     Tray {
                         Layout.alignment: Qt.AlignTop
-                        Layout.preferredHeight: Theme.barHeight
+                        panelWindow: panelWindow
                     }
                 }
             }
