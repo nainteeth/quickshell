@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 import ".."
 import "../components"
@@ -8,7 +9,7 @@ ExpandablePill {
     id: audioPill
     widgetName: "audio"
 
-    expandedHeight: 80
+    expandedHeight: 100
     expandedWidth: 185
     collapsedWidth: audioRow.width + 24
 
@@ -54,6 +55,7 @@ ExpandablePill {
         // Expanded state
         Column {
             visible: audioPill.isExpanded
+            spacing: 6
             Text {
                 color: Theme.textColor
                 font.pixelSize: 14
@@ -70,6 +72,33 @@ ExpandablePill {
                 value: (Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100
                 onMoved: {
                     Pipewire.defaultAudioSink.audio.volume = value / 100;
+                }
+            }
+            Rectangle {
+                width: parent.width
+                height: 30
+                color: "transparent"
+                border.color: Theme.borderColor
+                border.width: 1
+                radius: 4
+
+                Text {
+                    anchors.centerIn: parent
+                    color: Theme.textColor
+                    text: "Open Pavucontrol"
+                    font.pixelSize: 14
+                    font.bold: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: pavuProcess.running = true
+                }
+
+                Process {
+                    id: pavuProcess
+                    command: ["pavucontrol"]
                 }
             }
         }
