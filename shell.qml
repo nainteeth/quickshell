@@ -21,7 +21,7 @@ ShellRoot {
                 right: true
             }
 
-            implicitHeight: 400 // height reserved for widgets
+            implicitHeight: 1000 // height reserved for widgets
             exclusiveZone: Theme.barHeight + 8 // height for the actual bar. 8 is the top margin of the bar
             color: "transparent" // background color
             mask: Region {
@@ -71,6 +71,9 @@ ShellRoot {
                 RowLayout {
                     anchors.right: parent.right
                     anchors.top: parent.top
+                    Networking {
+                        Layout.alignment: Qt.AlignTop
+                    }
 
                     Battery {
                         Layout.alignment: Qt.AlignTop
