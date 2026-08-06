@@ -1,36 +1,26 @@
 import QtQuick
+import Quickshell.Io
 import ".."
 import "../components"
 
-ExpandablePill {
+Pill {
     id: clockPill
-    widgetName: "clock"
 
-    expandedHeight: 80
-    expandedWidth: 220
-    collapsedWidth: clockText.width + 24
+    MouseArea {
+        width: clockText.width
+        height: clockText.height
 
-    Column {
-        width: clockPill.isExpanded ? (clockPill.width - 24) : implicitWidth
-        height: clockPill.isExpanded ? (clockPill.height - 16) : implicitHeight
-        spacing: 6
-
-        // Unexpanded state
         Text {
             id: clockText
-            visible: !clockPill.isExpanded
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
             text: new Date().toLocaleString(Theme.locale, "ddd d MMM hh:mm")
         }
 
-        // Expanded state
-        Text {
-            visible: clockPill.isExpanded
-            color: Theme.textColor
-            font.pixelSize: 14
-            text: "WIP: Calendar"
+        onClicked: {
+            Qt.openUrlExternally("https://calendar.google.com/calendar");
+            hyprctlProcess.running = true;
         }
     }
 
@@ -41,5 +31,12 @@ ExpandablePill {
         running: true
         repeat: true
         onTriggered: clockText.text = new Date().toLocaleString(Theme.locale, "ddd d MMM hh:mm")
+    }
+    Process {
+        id: hyprctlProcess
+        // You shall not ask how this vibecoded line works.
+        // It just focuses your default browser when opening the link.
+        // If you want to open the url with another browser: No, you can't. This is a feature, not a bug.
+        command: ["bash", "-c", "d=$(xdg-settings get default-web-browser); c=$(awk -F= '/^StartupWMClass/{print $2; exit}' /usr/share/applications/$d ~/.local/share/applications/$d 2>/dev/null); hyprctl dispatch \"hl.dsp.focus({ window = 'class:${c:-${d%.desktop}}' })\""]
     }
 }
