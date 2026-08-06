@@ -55,6 +55,10 @@ ShellRoot {
                         Layout.alignment: Qt.AlignTop
                         Layout.preferredHeight: Theme.barHeight
                     }
+
+                    Audio {
+                        Layout.alignment: Qt.AlignTop
+                    }
                 }
 
                 // Middle side
