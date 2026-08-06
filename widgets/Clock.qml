@@ -18,7 +18,7 @@ ExpandablePill {
         // Unexpanded state
         Text {
             id: clockText
-            visible: !clockPill.isExpanded // Hides this text when the widget opens
+            visible: !clockPill.isExpanded
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
@@ -30,7 +30,7 @@ ExpandablePill {
             visible: clockPill.isExpanded
             color: Theme.textColor
             font.pixelSize: 14
-            // TODO: Add a calender
+            text: "WIP: Calendar"
         }
     }
 

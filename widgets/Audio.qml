@@ -30,6 +30,7 @@ ExpandablePill {
             visible: audioPill.isExpanded
             color: Theme.textColor
             font.pixelSize: 14
+            text: "WIP: volume slider"
         }
     }
 }
