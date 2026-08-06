@@ -7,7 +7,7 @@ import "../components"
 ExpandablePill {
     id: networkPill
     widgetName: "network"
-    expandedHeight: 600
+    expandedHeight: 80
     expandedWidth: 220
     collapsedWidth: networkRow.width + 24
 
@@ -54,12 +54,43 @@ ExpandablePill {
         }
 
         // Expanded state
-        Text {
-            id: expNetworkText
-            visible: networkPill.isExpanded
-            color: Theme.textColor
-            font.pixelSize: 14
-            text: "WIP: List of networks"
+        Column {
+            Text {
+                id: expNetworkText
+                visible: networkPill.isExpanded
+                color: Theme.textColor
+                font.pixelSize: 14
+                text: "Connected to: " + networkPill.activeNetworkSSID
+            }
+            Rectangle {
+                visible: networkPill.isExpanded
+                width: parent.width
+                height: 30
+                color: "transparent"
+                border.color: Theme.borderColor
+                border.width: 1
+                radius: 4
+
+                Text {
+                    visible: networkPill.isExpanded
+                    anchors.centerIn: parent
+                    color: Theme.textColor
+                    text: "Open nmtui"
+                    font.pixelSize: 14
+                    font.bold: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: nmtuiProcess.running = true
+                }
+
+                Process {
+                    id: nmtuiProcess
+                    command: ["ghostty", "-e", "nmtui"] // this opens nmtui in ghostty. You dont use ghostty? Didnt ask.
+                }
+            }
         }
 
         Process {
