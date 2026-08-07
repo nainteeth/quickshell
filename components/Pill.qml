@@ -3,7 +3,8 @@ import ".."
 
 Rectangle {
     id: root
-    color: Theme.backgroundColor
+    property bool useHoverColor: true
+    color: (pillMouseArea.containsMouse && useHoverColor) ? Theme.hoverBackgroundColor : Theme.backgroundColor
     implicitHeight: 24
     implicitWidth: contentItem.width + 12
     radius: 12
@@ -11,6 +12,12 @@ Rectangle {
     border.width: 1
 
     signal clicked
+
+    Behavior on color {
+        ColorAnimation {
+            duration: 150
+        }
+    }
 
     Item {
         id: contentItem
@@ -20,7 +27,10 @@ Rectangle {
     }
 
     MouseArea {
+        id: pillMouseArea
         anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         z: -1 // this changes the priority of the MouseArea to be lower than the children, so that children can handle their own clicks first
         onClicked: {
             console.log("Pill's own MouseArea fired");

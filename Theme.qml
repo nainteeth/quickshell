@@ -8,6 +8,7 @@ QtObject {
     property color inactiveTextColor: "#888888"
     property color backgroundColor: "#000000"
     property color borderColor: "#ffffff"
+    property color hoverBackgroundColor: "#333333"
     property int barHeight: 24
     property int trayIconSize: 20
     property int workspaceIconSize: 32

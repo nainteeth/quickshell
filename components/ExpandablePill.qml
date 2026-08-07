@@ -9,6 +9,7 @@ Pill {
     property int expandedHeight: 120
     property int expandedWidth: 200
     property int collapsedWidth: 50
+    useHoverColor: !isExpanded
 
     readonly property bool isExpanded: GlobalState.expandedWidget === widgetName
 
@@ -17,6 +18,8 @@ Pill {
 
     Layout.preferredHeight: implicitHeight
     Layout.preferredWidth: implicitWidth
+
+    clip: true // this makes potential buttons inside the expanded pill not go outside the pill during the animation
 
     Behavior on implicitHeight {
         NumberAnimation {

@@ -74,10 +74,10 @@ ExpandablePill {
                     Pipewire.defaultAudioSink.audio.volume = value / 100;
                 }
             }
-            Rectangle {
+            Pill {
                 width: parent.width
                 height: 30
-                color: "transparent"
+                color: pavuMouseArea.containsMouse ? Theme.hoverBackgroundColor : "transparent"
                 border.color: Theme.borderColor
                 border.width: 1
                 radius: 4
@@ -91,6 +91,8 @@ ExpandablePill {
                 }
 
                 MouseArea {
+                    id: pavuMouseArea
+                    hoverEnabled: true
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: pavuProcess.running = true
