@@ -19,14 +19,6 @@ else
     gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"
 fi
 
-# Zed
-# Zed is sometimes doesnt update live. Just restart the editor.
-ZED_SETTINGS="$HOME/.config/zed/settings.json"
-
-if [[ -f "$ZED_SETTINGS" ]]; then
-    sed -i '/"theme": {/,/}/ s/"mode": "[^"]*"/"mode": "'"$MODE"'"/' "$ZED_SETTINGS"
-fi
-
 # Ghostty
 pkill -SIGUSR2 ghostty || true
 

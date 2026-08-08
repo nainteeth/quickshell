@@ -34,6 +34,7 @@ ShellRoot {
                 onClicked: GlobalState.expandedWidget = ""
                 z: -1  // magic
             }
+            Notification {}
 
             Item {
                 id: barRow
@@ -56,6 +57,10 @@ ShellRoot {
                     }
 
                     Audio {
+                        Layout.alignment: Qt.AlignTop
+                    }
+
+                    Media {
                         Layout.alignment: Qt.AlignTop
                     }
                 }
@@ -92,5 +97,8 @@ ShellRoot {
                 }
             }
         }
+        // Launcher {
+        //     screenModel: modelData
+        // }
     }
 }

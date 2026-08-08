@@ -12,7 +12,7 @@ Pill {
         spacing: 12
 
         Repeater {
-            model: Hyprland.workspaces.values.filter(ws => ws.monitor == Hyprland.monitorFor(screen))
+            model: Hyprland.workspaces.values.filter(ws => ws.monitor == Hyprland.monitorFor(screen) && ws.id > 0)
 
             Text {
                 color: modelData.active ? Theme.textColor : Theme.inactiveTextColor

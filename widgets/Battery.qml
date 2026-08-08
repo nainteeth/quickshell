@@ -26,7 +26,7 @@ ExpandablePill {
                     let percent = UPower.displayDevice.percentage;
 
                     if (UPower.displayDevice.state === UPowerDeviceState.Charging) {
-                        return "⚡";
+                        return "󱐋";
                     }
                     if (percent >= 0.90)
                         return "󰁹";

@@ -6,9 +6,11 @@ import "../components"
 ExpandablePill {
     id: networkPill
     widgetName: "network"
+    visible: !ethernetConnected
 
-    property var activeNetworkSSID
-    property int activeNetworkSignalStrength
+    property var activeNetworkSSID: "Not connected"
+    property int activeNetworkSignalStrength: 0
+    property var ethernetConnected: false
 
     Item {
         implicitWidth: networkPill.isExpanded ? expandedView.implicitWidth : collapsedView.implicitWidth
@@ -97,7 +99,25 @@ ExpandablePill {
                         let parts = activeLine.split(":");
                         networkPill.activeNetworkSSID = parts[1];
                         networkPill.activeNetworkSignalStrength = parseInt(parts[2]);
+                    } else {
+                        networkPill.activeNetworkSSID = "Not connected";
+                        networkPill.activeNetworkSignalStrength = 0;
                     }
+                }
+            }
+        }
+
+        property bool ethernetConnected: false
+        Process {
+            id: ethernetProcess
+            running: true
+            command: ["env", "LC_ALL=C", "nmcli", "-t", "-f", "TYPE,STATE", "dev"]
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    let lines = text.split("\n");
+                    // Check if any line indicates that ethernet is connected
+                    // some() returns true or false
+                    networkPill.ethernetConnected = lines.some(line => line.startsWith("ethernet:connected"));
                 }
             }
         }
@@ -106,7 +126,10 @@ ExpandablePill {
             interval: 5000
             running: true
             repeat: true
-            onTriggered: networkProcess.running = true
+            onTriggered: {
+                networkProcess.running = true;
+                ethernetProcess.running = true;
+            }
         }
     }
 }
