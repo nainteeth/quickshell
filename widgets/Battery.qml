@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell.Services.UPower
 import ".."
 import "../components"
@@ -7,19 +8,16 @@ ExpandablePill {
     id: batteryPill
     widgetName: "battery"
     visible: UPower.displayDevice.isLaptopBattery
-
-    // Define the specific dimensions for the battery widget
-    expandedHeight: 60
-    expandedWidth: 100
-    collapsedWidth: batteryContent.width + 12
+    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
 
     Column {
-        width: batteryPill.isExpanded ? (batteryPill.width - 24) : implicitWidth
-        height: batteryPill.isExpanded ? (batteryPill.height - 16) : implicitHeight
+        spacing: 6
 
         Row {
             id: batteryContent
             spacing: 6
+            anchors.horizontalCenter: parent.horizontalCenter
+
             Text {
                 color: Theme.textColor
                 font.pixelSize: 14
@@ -45,6 +43,7 @@ ExpandablePill {
                     return "󰂎";
                 }
             }
+
             Text {
                 color: Theme.textColor
                 font.pixelSize: 14
@@ -52,8 +51,10 @@ ExpandablePill {
                 text: Math.round(UPower.displayDevice.percentage * 100) + "%"
             }
         }
+
         Text {
             visible: batteryPill.isExpanded
+            anchors.horizontalCenter: parent.horizontalCenter
             color: Theme.textColor
             text: UPower.displayDevice.state == UPowerDeviceState.Discharging ? Math.round(UPower.displayDevice.timeToEmpty / 60) + " min left" : Math.round(UPower.displayDevice.timeToFull / 60) + " min left"
         }

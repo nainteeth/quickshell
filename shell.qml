@@ -53,7 +53,6 @@ ShellRoot {
                     Workspaces {
                         screen: modelData
                         Layout.alignment: Qt.AlignTop
-                        Layout.preferredHeight: Theme.barHeight
                     }
 
                     Audio {
@@ -75,6 +74,9 @@ ShellRoot {
                 RowLayout {
                     anchors.right: parent.right
                     anchors.top: parent.top
+                    ThemeSwitcher {
+                        Layout.alignment: Qt.AlignTop
+                    }
                     Networking {
                         Layout.alignment: Qt.AlignTop
                     }

@@ -1,43 +1,45 @@
 import QtQuick
+import QtQuick.Controls
 import ".."
 
-Rectangle {
+Control {
     id: root
+    default property alias content: root.contentItem
+    property alias radius: bg.radius
+    property alias color: bg.color
+    property alias border: bg.border
     property bool useHoverColor: true
-    color: (pillMouseArea.containsMouse && useHoverColor) ? Theme.hoverBackgroundColor : Theme.backgroundColor
-    implicitHeight: 24
-    implicitWidth: contentItem.width + 12
-    radius: 12
-    border.color: Theme.borderColor
-    border.width: 1
+    leftPadding: 12
+    rightPadding: 12
+    topPadding: 6
+    bottomPadding: 6
 
     signal clicked
 
-    Behavior on color {
-        ColorAnimation {
-            duration: 150
+    contentItem: Item {}
+
+    background: Rectangle {
+        id: bg
+        color: (pillMouseArea.containsMouse && root.useHoverColor) ? Theme.hoverBackgroundColor : Theme.backgroundColor
+        implicitHeight: Theme.barHeight
+        radius: 12
+        border.color: Theme.borderColor
+        border.width: 1
+
+        Behavior on color {
+            ColorAnimation {
+                duration: 150
+            }
+        }
+
+        MouseArea {
+            id: pillMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                root.clicked();
+            }
         }
     }
-
-    Item {
-        id: contentItem
-        anchors.centerIn: parent
-        width: childrenRect.width
-        height: childrenRect.height
-    }
-
-    MouseArea {
-        id: pillMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        z: -1 // this changes the priority of the MouseArea to be lower than the children, so that children can handle their own clicks first
-        onClicked: {
-            console.log("Pill's own MouseArea fired");
-            root.clicked();
-        }
-    }
-
-    // Makes unlabeled children become children of contentItem automatically.
-    default property alias content: contentItem.data
 }
