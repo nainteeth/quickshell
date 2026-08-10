@@ -2,10 +2,21 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 
 import "./widgets"
 
 ShellRoot {
+    IpcHandler {
+        target: "launcher"
+        function toggle(): void {
+            GlobalState.launcherOpen = !GlobalState.launcherOpen;
+        }
+    }
+    LazyLoader {
+        active: GlobalState.launcherOpen
+        Launcher {}
+    }
     Variants {
         model: Quickshell.screens
         PanelWindow {

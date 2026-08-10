@@ -4,10 +4,10 @@ import QtQuick
 QtObject {
     id: attributes
 
-    property bool isDark
+    property bool isDark: false // TODO: Figure out how to remember the last theme.
 
     // Adwaita colors
-    property real pillOpacity: 0.7
+    property real pillOpacity: 0.8
     property color barColor: "transparent"
     property color textColor: isDark ? "#ffffff" : "#000000"
     property color inactiveTextColor: "#9a9996"
