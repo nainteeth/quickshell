@@ -128,7 +128,7 @@ PanelWindow {
 
                 Behavior on implicitHeight {
                     NumberAnimation {
-                        duration: 150
+                        duration: 200
                         easing.type: Easing.OutCubic
                     }
                 }

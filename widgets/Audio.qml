@@ -36,13 +36,13 @@ ExpandablePill {
                     let volume = Pipewire.defaultAudioSink?.audio.volume ?? 0;
                     if (volume >= 0.80)
                         return "";
-                    if (volume >= 0.60)
-                        return "󰕾";
                     if (volume >= 0.40)
+                        return "󰕾";
+                    if (volume >= 0.01)
                         return "";
-                    if (volume > 0)
+                    if (volume == 0)
                         return "󰖁";
-                    return "?";
+                    return "Can't get volume";
                 }
             }
         }
