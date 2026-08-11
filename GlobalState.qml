@@ -1,7 +1,8 @@
 pragma Singleton
 import QtQuick
+import QtCore
 
-QtObject {
+Item {
     property string expandedWidget: ""  // "" means is nothing expanded
     property bool launcherOpen: false
 }
