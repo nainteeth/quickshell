@@ -7,7 +7,6 @@ import "../components"
 
 ExpandablePill {
     id: batteryPill
-    widgetName: "battery"
     visible: UPower.displayDevice.isLaptopBattery
     Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
 

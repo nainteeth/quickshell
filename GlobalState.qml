@@ -3,6 +3,6 @@ import QtQuick
 import QtCore
 
 Item {
-    property string expandedWidget: ""  // "" means is nothing expanded
+    property var expandedWidget: null  // null means nothing is expanded
     property bool launcherOpen: false
 }

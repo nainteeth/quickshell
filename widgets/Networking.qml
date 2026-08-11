@@ -6,7 +6,6 @@ import "../components"
 
 ExpandablePill {
     id: networkPill
-    widgetName: "network"
     visible: !ethernetConnected
 
     property var activeNetworkSSID: "Not connected"

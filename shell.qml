@@ -64,8 +64,8 @@ ShellRoot {
             // click on the widget itself, the widget intercepts the click first.
             MouseArea {
                 anchors.fill: parent
-                visible: GlobalState.expandedWidget != ""
-                onClicked: GlobalState.expandedWidget = ""
+                visible: GlobalState.expandedWidget !== null
+                onClicked: GlobalState.expandedWidget = null
                 z: -1  // magic
             }
 

@@ -12,7 +12,6 @@ import "../components"
 // TODO: Add a input device volume slider
 ExpandablePill {
     id: audioPill
-    widgetName: "audio"
 
     collapsedContent: Row {
         spacing: 6

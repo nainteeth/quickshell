@@ -6,12 +6,6 @@ import ".."
 Pill {
     id: root
 
-    // Unique identifier for the widget.
-    // This is used in the global state to check which widget is expanded.
-    // By storing the active widget name globally there can only ever be
-    // a single ExpandablePill expanded at a time.
-    property string widgetName: ""
-
     // ExpandablePill always expects separate collapsed and expanded views.
     required property Component collapsedContent
     required property Component expandedContent
@@ -19,8 +13,8 @@ Pill {
     // Disables hover color when expanded.
     useHoverColor: !isExpanded
 
-    // Checks if this widget is active in the global state.
-    readonly property bool isExpanded: GlobalState.expandedWidget === widgetName
+    // Checks if this widget itself is active in the global state.
+    readonly property bool isExpanded: GlobalState.expandedWidget === root
 
     // This prevents the pills content to clip outside the pill during the animation.
     // It is needed since the pills content updates instantly while the pill itself needs time for the animation.
@@ -65,6 +59,6 @@ Pill {
 
     // Toggles the global expanded state.
     onClicked: {
-        GlobalState.expandedWidget = isExpanded ? "" : widgetName;
+        GlobalState.expandedWidget = isExpanded ? null : root;
     }
 }
