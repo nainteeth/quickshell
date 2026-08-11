@@ -31,46 +31,28 @@ Item {
                 borderColor: "#d1d1d1",
                 hoverBackgroundBaseColor: "#f2f2f2"
             },
-            "catppuccin-latte": {
-                name: "Catppuccin Latte",
-                isDark: false,
-                textColor: "#4c4f69",
-                inactiveTextColor: "#8c8fa1",
-                backgroundBaseColor: "#eff1f5",
-                borderColor: "#bcc0cc",
-                hoverBackgroundBaseColor: "#e6e9ef"
-            },
-            "catppuccin-frappe": {
-                name: "Catppuccin Frappe",
-                isDark: true,
-                textColor: "#c6d0f5",
-                inactiveTextColor: "#838ba7",
-                backgroundBaseColor: "#303446",
-                borderColor: "#626880",
-                hoverBackgroundBaseColor: "#414559"
-            },
-            "catppuccin-macchiato": {
-                name: "Catppuccin Macchiato",
-                isDark: true,
-                textColor: "#cad3f5",
-                inactiveTextColor: "#8087a2",
-                backgroundBaseColor: "#24273a",
-                borderColor: "#5b6078",
-                hoverBackgroundBaseColor: "#363a4f"
-            },
-            "catppuccin-mocha": {
-                name: "Catppuccin Mocha",
+            "catppuccin-dark": {
+                name: "Catppuccin Dark",
                 isDark: true,
                 textColor: "#cdd6f4",
                 inactiveTextColor: "#6c7086",
                 backgroundBaseColor: "#1e1e2e",
                 borderColor: "#45475a",
                 hoverBackgroundBaseColor: "#313244"
+            },
+            "catppuccin-light": {
+                name: "Catppuccin Light",
+                isDark: false,
+                textColor: "#4c4f69",
+                inactiveTextColor: "#8c8fa1",
+                backgroundBaseColor: "#eff1f5",
+                borderColor: "#bcc0cc",
+                hoverBackgroundBaseColor: "#e6e9ef"
             }
         })
 
     // this is used by the theme switcher as the repeaters model to show a button for each theme
-    readonly property var themeNames: ["dark", "light", "catppuccin-latte", "catppuccin-frappe", "catppuccin-macchiato", "catppuccin-mocha"]
+    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light"]
 
     // exposes the saved theme name on the root object. This is needed because the stuff in the settings object is not accessable from outside this file
     property alias themeName: settings.themeName

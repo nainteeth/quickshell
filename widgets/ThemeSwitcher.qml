@@ -9,7 +9,7 @@ ExpandablePill {
     id: themePill
     Layout.alignment: Qt.AlignTop
 
-    readonly property var themeNames: ["dark", "light", "catppuccin-latte", "catppuccin-frappe", "catppuccin-macchiato", "catppuccin-mocha"]
+    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light"]
 
     collapsedContent: Row {
         spacing: 6
