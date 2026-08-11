@@ -1,35 +1,82 @@
+pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Layouts
 import Quickshell.Io
 import ".."
 import "../components"
 
-Pill {
+ExpandablePill {
     id: themePill
+    Layout.alignment: Qt.AlignTop
 
-    Row {
+    readonly property var themeNames: ["dark", "light", "catppuccin-latte", "catppuccin-frappe", "catppuccin-macchiato", "catppuccin-mocha"]
+
+    collapsedContent: Row {
+        spacing: 6
+
         Text {
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
-            text: Theme.isDark ? "Dark Theme" : "Light Theme"
+            text: Theme.currentTheme.name
             anchors.verticalCenter: parent.verticalCenter
         }
+
+        Text {
+            color: Theme.textColor
+            font.pixelSize: 14
+            text: "▾"
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    expandedContent: Column {
+        id: expandedThemeView
+        spacing: 6
+
+        function applyTheme(themeName) {
+            Theme.setTheme(themeName);
+            themeProcess.command = [themeScriptPath, themeName];
+            themeProcess.running = true;
+            GlobalState.expandedWidget = null;
+        }
+
+        Text {
+            color: Theme.textColor
+            font.pixelSize: 14
+            text: "Select Theme"
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Repeater {
+            model: themePill.themeNames
+
+            delegate: Pill {
+                id: themeOptionPill
+                required property string modelData
+                anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: expandedThemeView.applyTheme(themeOptionPill.modelData)
+
+                Row {
+                    spacing: 6
+
+                    Text {
+                        color: Theme.textColor
+                        font.pixelSize: 14
+                        font.bold: true
+                        // tiny dot to show which theme is currently selected
+                        text: Theme.themeName === themeOptionPill.modelData ? "• " + Theme.themes[themeOptionPill.modelData].name : Theme.themes[themeOptionPill.modelData].name
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+            }
+        }
+
+        // This changes the relative path to an absolute path and removes the "file://" prefix
+        readonly property string themeScriptPath: Qt.resolvedUrl("../scripts/theme-switch.sh").toString().replace("file://", "")
 
         Process {
             id: themeProcess
         }
-    }
-
-    onClicked: {
-        Theme.isDark = !Theme.isDark;
-        let mode = Theme.isDark ? "dark" : "light";
-
-        let scriptUrl = Qt.resolvedUrl("../scripts/theme-switch.sh").toString();
-        // the above line returns a file url,
-        // so we need to remove the "file://" prefix to get the actual path
-        let scriptPath = scriptUrl.replace("file://", "");
-
-        themeProcess.command = ["bash", "-c", scriptPath + " " + mode];
-        themeProcess.running = true;
     }
 }

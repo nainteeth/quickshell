@@ -3,27 +3,104 @@ import QtQuick
 import QtCore
 
 Item {
-    // Only the properties of the root object are exposed which is why there is an alias
-    property alias isDark: settings.isDark
-
-    Settings { // these settings are persistent
+    Settings {
         id: settings
+        // these settings are persistent
         location: StandardPaths.writableLocation(StandardPaths.ConfigLocation) + "/quickshell/config/settings.conf"
-        property bool isDark: false
+        // default theme if nothing else was saved yet
+        property string themeName: "dark"
     }
 
-    // Adwaita colors
+    // all available themes live in this object
+    readonly property var themes: ({
+            "dark": {
+                name: "Dark",
+                isDark: true,
+                textColor: "#ffffff",
+                inactiveTextColor: "#9a9996",
+                backgroundBaseColor: "#1e1e1e",
+                borderColor: "#383838",
+                hoverBackgroundBaseColor: "#303030"
+            },
+            "light": {
+                name: "Light",
+                isDark: false,
+                textColor: "#000000",
+                inactiveTextColor: "#6b6b6b",
+                backgroundBaseColor: "#ffffff",
+                borderColor: "#d1d1d1",
+                hoverBackgroundBaseColor: "#f2f2f2"
+            },
+            "catppuccin-latte": {
+                name: "Catppuccin Latte",
+                isDark: false,
+                textColor: "#4c4f69",
+                inactiveTextColor: "#8c8fa1",
+                backgroundBaseColor: "#eff1f5",
+                borderColor: "#bcc0cc",
+                hoverBackgroundBaseColor: "#e6e9ef"
+            },
+            "catppuccin-frappe": {
+                name: "Catppuccin Frappe",
+                isDark: true,
+                textColor: "#c6d0f5",
+                inactiveTextColor: "#838ba7",
+                backgroundBaseColor: "#303446",
+                borderColor: "#626880",
+                hoverBackgroundBaseColor: "#414559"
+            },
+            "catppuccin-macchiato": {
+                name: "Catppuccin Macchiato",
+                isDark: true,
+                textColor: "#cad3f5",
+                inactiveTextColor: "#8087a2",
+                backgroundBaseColor: "#24273a",
+                borderColor: "#5b6078",
+                hoverBackgroundBaseColor: "#363a4f"
+            },
+            "catppuccin-mocha": {
+                name: "Catppuccin Mocha",
+                isDark: true,
+                textColor: "#cdd6f4",
+                inactiveTextColor: "#6c7086",
+                backgroundBaseColor: "#1e1e2e",
+                borderColor: "#45475a",
+                hoverBackgroundBaseColor: "#313244"
+            }
+        })
+
+    // this is used by the theme switcher as the repeaters model to show a button for each theme
+    readonly property var themeNames: ["dark", "light", "catppuccin-latte", "catppuccin-frappe", "catppuccin-macchiato", "catppuccin-mocha"]
+
+    // exposes the saved theme name on the root object. This is needed because the stuff in the settings object is not accessable from outside this file
+    property alias themeName: settings.themeName
+
+    // This assigns the currently selected theme object to a property so that the shell can read the colors from it. This is used in the shell to style all the widgets and stuff. For example: You can now access the text color of the currently selected theme with Theme.currentTheme.textColor. Very nice!
+    readonly property var currentTheme: themes[settings.themeName]
+
+    readonly property bool isDark: currentTheme.isDark
+    // nice readable name for stuff like the theme switcher pill
+    readonly property string themeDisplayName: currentTheme.name
+
     property real pillOpacity: 0.8
     property color barColor: "transparent"
-    property color textColor: settings.isDark ? "#ffffff" : "#000000"
-    property color inactiveTextColor: "#9a9996"
-    property color backgroundColor: settings.isDark ? Qt.rgba(0.117, 0.117, 0.117, pillOpacity) : Qt.rgba(1, 1, 1, pillOpacity)
-    property color borderColor: settings.isDark ? "#383838" : "#d1d1d1"
-    property color hoverBackgroundColor: settings.isDark ? Qt.rgba(0.188, 0.188, 0.188, pillOpacity) : Qt.rgba(0.949, 0.949, 0.949, pillOpacity)
+    // from here on the shell just reads colors from the currently selected theme
+    property color textColor: currentTheme.textColor
+    property color inactiveTextColor: currentTheme.inactiveTextColor
+    // This applies the opacity directly to the background color
+    property color backgroundColor: Qt.alpha(currentTheme.backgroundBaseColor, pillOpacity)
+    property color borderColor: currentTheme.borderColor
+    property color hoverBackgroundColor: Qt.alpha(currentTheme.hoverBackgroundBaseColor, pillOpacity)
 
     property int barHeight: 32
     property int trayIconSize: 20
     property int workspaceIconSize: 32
     property int batteryTextSize: 22
     property var locale: Qt.locale("de_DE")
+
+    function setTheme(newThemeName) {
+        // only switch if the requested theme actually exists
+        if (themes[newThemeName]) // This simply checks if it is not undefined.
+            settings.themeName = newThemeName;
+    }
 }

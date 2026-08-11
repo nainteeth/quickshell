@@ -1,25 +1,44 @@
 #!/usr/bin/env bash
-# Usage: theme-switch.sh [light|dark]
-# Called from Quickshell with the target mode already decided.
+# Usage: theme-switch.sh [dark|light|catppuccin-latte|catppuccin-frappe|catppuccin-macchiato|catppuccin-mocha]
 
 set -euo pipefail
 
-MODE="${1:-}"
-if [[ "$MODE" != "light" && "$MODE" != "dark" ]]; then
-    echo "Usage: $0 [light|dark]" >&2
-    exit 1
-fi
+THEME="${1:-}"
 
-# GTK
-if [[ "$MODE" == "dark" ]]; then
-    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
-    gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
-else
-    gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
-    gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"
-fi
+case "$THEME" in
+    light)
+        COLOR_SCHEME="prefer-light"
+        GTK_THEME="Adwaita"
+        ;;
+    dark)
+        COLOR_SCHEME="prefer-dark"
+        GTK_THEME="Adwaita-dark"
+        ;;
+    catppuccin-latte)
+        COLOR_SCHEME="prefer-light"
+        GTK_THEME="catppuccin-latte-blue-standard+default"
+        ;;
+    catppuccin-frappe)
+        COLOR_SCHEME="prefer-dark"
+        GTK_THEME="catppuccin-frappe-blue-standard+default"
+        ;;
+    catppuccin-macchiato)
+        COLOR_SCHEME="prefer-dark"
+        GTK_THEME="catppuccin-macchiato-blue-standard+default"
+        ;;
+    catppuccin-mocha)
+        COLOR_SCHEME="prefer-dark"
+        GTK_THEME="catppuccin-mocha-blue-standard+default"
+        ;;
+    *)
+        exit 1
+        ;;
+esac
 
-# Ghostty
+gsettings set org.gnome.desktop.interface color-scheme "$COLOR_SCHEME"
+gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME"
+
+// This refreshes the ghostty theme
 pkill -SIGUSR2 ghostty || true
 
-echo "Theme switched to: $MODE"
+echo "Theme switched to: $THEME"
