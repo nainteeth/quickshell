@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import Quickshell.Io
@@ -13,101 +14,88 @@ ExpandablePill {
     id: audioPill
     widgetName: "audio"
 
-    Item {
-        // Resizes the widget based on its current state.
-        implicitWidth: audioPill.isExpanded ? expandedView.implicitWidth : collapsedView.implicitWidth
-        implicitHeight: audioPill.isExpanded ? expandedView.implicitHeight : collapsedView.implicitHeight
+    collapsedContent: Row {
+        spacing: 6
 
-        // Collapsed view showing volume percentage and a dynamic icon.
-        Row {
-            id: collapsedView
-            visible: !audioPill.isExpanded
-            anchors.centerIn: parent
-            spacing: 6
+        Text {
+            id: audioText
+            color: Theme.textColor
+            font.pixelSize: 14
+            font.bold: true
+            text: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+        }
 
-            Text {
-                id: audioText
-                color: Theme.textColor
-                font.pixelSize: 14
-                font.bold: true
-                text: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+        // Selects the appropriate icon based on the current volume level.
+        Text {
+            id: audioIcon
+            color: Theme.textColor
+            font.pixelSize: 14
+            font.bold: true
+            text: {
+                let volume = Pipewire.defaultAudioSink?.audio.volume ?? 0;
+                if (volume >= 0.80)
+                    return "";
+                if (volume >= 0.40)
+                    return "󰕾";
+                if (volume >= 0.01)
+                    return "";
+                if (volume == 0)
+                    return "󰖁";
+                return "Can't get volume";
             }
+        }
+    }
 
-            // Selects the appropriate icon based on the current volume level.
-            Text {
-                id: audioIcon
-                color: Theme.textColor
-                font.pixelSize: 14
-                font.bold: true
-                text: {
-                    let volume = Pipewire.defaultAudioSink?.audio.volume ?? 0;
-                    if (volume >= 0.80)
-                        return "";
-                    if (volume >= 0.40)
-                        return "󰕾";
-                    if (volume >= 0.01)
-                        return "";
-                    if (volume == 0)
-                        return "󰖁";
-                    return "Can't get volume";
-                }
+    // Expanded view with volume control and a button to open pavucontrol.
+    // Outsourcing work! Yippie!
+    expandedContent: Column {
+        spacing: 6
+
+        Text {
+            color: Theme.textColor
+            font.pixelSize: 14
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Global Volume: " + Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+        }
+
+        // Forces UI updates when the Pipewire sink changes externally.
+        PwObjectTracker {
+            objects: [Pipewire.defaultAudioSink]
+        }
+
+        // Reads and writes volume to the default audio sink.
+        // TODO: Make it prettier
+        Slider {
+            id: volumeSlider
+            anchors.horizontalCenter: parent.horizontalCenter
+            implicitWidth: 150
+            from: 0
+            to: 100
+            stepSize: 1
+            value: (Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100
+            onMoved: {
+                Pipewire.defaultAudioSink.audio.volume = value / 100;
             }
         }
 
-        // Expanded view with volume control and a button to open pavucontrol.
-        // Outsourcing work! Yippie!
-        Column {
-            id: expandedView
-            visible: audioPill.isExpanded
-            anchors.centerIn: parent
-            spacing: 6
+        // Button to launch the external pavucontrol application.
+        Pill {
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: pavuProcess.running = true
 
-            Text {
-                color: Theme.textColor
-                font.pixelSize: 14
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "Global Volume: " + Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
-            }
-
-            // Forces UI updates when the Pipewire sink changes externally.
-            PwObjectTracker {
-                objects: [Pipewire.defaultAudioSink]
-            }
-
-            // Reads and writes volume to the default audio sink.
-            // TODO: Make it prettier
-            Slider {
-                id: volumeSlider
-                anchors.horizontalCenter: parent.horizontalCenter
-                implicitWidth: 150
-                from: 0
-                to: 100
-                stepSize: 1
-                value: (Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100
-                onMoved: {
-                    Pipewire.defaultAudioSink.audio.volume = value / 100;
+            Row {
+                spacing: 6
+                Text {
+                    color: Theme.textColor
+                    text: "Open Pavucontrol"
+                    font.pixelSize: 14
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-            }
 
-            // Button to launch the external pavucontrol application.
-            Pill {
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: pavuProcess.running = true
-
-                Row {
-                    spacing: 6
-                    Text {
-                        color: Theme.textColor
-                        text: "Open Pavucontrol"
-                        font.pixelSize: 14
-                        font.bold: true
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    Process {
-                        id: pavuProcess
-                        command: ["pavucontrol"]
-                    }
+                Process {
+                    id: pavuProcess
+                    command: ["pavucontrol"]
                 }
             }
         }

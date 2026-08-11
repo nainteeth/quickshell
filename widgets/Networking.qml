@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell.Io
 import ".."
@@ -12,77 +13,66 @@ ExpandablePill {
     property int activeNetworkSignalStrength: 0
     property var ethernetConnected: false
 
-    Item {
-        implicitWidth: networkPill.isExpanded ? expandedView.implicitWidth : collapsedView.implicitWidth
-        implicitHeight: networkPill.isExpanded ? expandedView.implicitHeight : collapsedView.implicitHeight
+    collapsedContent: Row {
+        spacing: 6
 
-        Row {
-            id: collapsedView
-            visible: !networkPill.isExpanded
-            anchors.centerIn: parent
-            spacing: 6
-
-            Text {
-                id: currentNetworkSignalStrength
-                color: Theme.textColor
-                font.pixelSize: 14
-                font.bold: true
-                text: {
-                    let signal = networkPill.activeNetworkSignalStrength;
-                    if (signal >= 80)
-                        return "󰣺";
-                    if (signal >= 60)
-                        return "󰣸";
-                    if (signal >= 40)
-                        return "󰣶";
-                    if (signal >= 20)
-                        return "󰣴";
-                    return "󰣽";
-                }
-            }
-
-            Text {
-                id: unexpNetworkText
-                color: Theme.textColor
-                font.pixelSize: 14
-                font.bold: true
-                text: networkPill.activeNetworkSSID
+        Text {
+            id: currentNetworkSignalStrength
+            color: Theme.textColor
+            font.pixelSize: 14
+            font.bold: true
+            text: {
+                let signal = networkPill.activeNetworkSignalStrength;
+                if (signal >= 80)
+                    return "󰣺";
+                if (signal >= 60)
+                    return "󰣸";
+                if (signal >= 40)
+                    return "󰣶";
+                if (signal >= 20)
+                    return "󰣴";
+                return "󰣽";
             }
         }
 
-        Column {
-            id: expandedView
-            visible: networkPill.isExpanded
-            anchors.centerIn: parent
-            spacing: 12
+        Text {
+            id: unexpNetworkText
+            color: Theme.textColor
+            font.pixelSize: 14
+            font.bold: true
+            text: networkPill.activeNetworkSSID
+        }
+    }
 
-            Text {
-                id: expNetworkText
-                color: Theme.textColor
-                font.pixelSize: 14
-                text: "Connected to: " + networkPill.activeNetworkSSID
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
+    expandedContent: Column {
+        spacing: 12
 
-            Pill {
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: nmtuiProcess.running = true
+        Text {
+            id: expNetworkText
+            color: Theme.textColor
+            font.pixelSize: 14
+            text: "Connected to: " + networkPill.activeNetworkSSID
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
 
-                Row {
-                    spacing: 6
+        Pill {
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: nmtuiProcess.running = true
 
-                    Text {
-                        color: Theme.textColor
-                        text: "Open nmtui"
-                        font.pixelSize: 14
-                        font.bold: true
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
+            Row {
+                spacing: 6
 
-                    Process {
-                        id: nmtuiProcess
-                        command: ["ghostty", "-e", "nmtui"]
-                    }
+                Text {
+                    color: Theme.textColor
+                    text: "Open nmtui"
+                    font.pixelSize: 14
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Process {
+                    id: nmtuiProcess
+                    command: ["ghostty", "-e", "nmtui"]
                 }
             }
         }
@@ -107,7 +97,6 @@ ExpandablePill {
             }
         }
 
-        property bool ethernetConnected: false
         Process {
             id: ethernetProcess
             running: true
