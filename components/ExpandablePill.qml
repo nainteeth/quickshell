@@ -3,11 +3,14 @@ import QtQuick.Layouts
 import ".."
 
 // Base component for widgets that expand when clicked.
+// Widgets using this must define collapsedContent and expandedContent
+// This component uses Pill as a base.
 Pill {
     id: root
 
-    // ExpandablePill always expects separate collapsed and expanded views.
+    // Content shown when collapsed
     required property Component collapsedContent
+    // Content shown when expanded
     required property Component expandedContent
 
     // Disables hover color when expanded.
@@ -20,8 +23,10 @@ Pill {
     // It is needed since the pills content updates instantly while the pill itself needs time for the animation.
     clip: true
 
+    // The contentItem is the Item (any object) that is inside the pill
     contentItem: Item {
-        // These lines adjust the size of the pill based on te current state.
+        // These lines adjust the size of the content based on te current state.
+        // This also resizes the Pill itself since the size of the pill adjusts to its content
         implicitWidth: root.isExpanded ? expandedLoader.implicitWidth : collapsedLoader.implicitWidth
         implicitHeight: root.isExpanded ? expandedLoader.implicitHeight : collapsedLoader.implicitHeight
 
@@ -57,7 +62,7 @@ Pill {
         }
     }
 
-    // Toggles the global expanded state.
+    // Toggles the global expanded state. This Singleton stores the expanded widget directly and can only store a single widget at a time. Therefore if you expand a widget while another one is already expanded, it gets overwritten and the first widget closes. This is intended behaviour so you don't have to manually close all the widgets you expand.
     onClicked: {
         GlobalState.expandedWidget = isExpanded ? null : root;
     }

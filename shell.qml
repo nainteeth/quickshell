@@ -58,10 +58,7 @@ ShellRoot {
                 item: barRow
             }
 
-            // Invisible background overlay that activates only when a widget is expanded.
-            // Clicking anywhere on this empty space will close the currently expanded widget.
-            // z: -1 pushes it to the very bottom of the visual stack, ensuring that if you
-            // click on the widget itself, the widget intercepts the click first.
+            // Invisible background overlay that activates only when a widget is expanded. Clicking anywhere on this empty space will close the currently expanded widget. z: -1 pushes it to the very bottom of the visual stack, ensuring that if you click on the widget itself, the widget intercepts the click first.
             MouseArea {
                 anchors.fill: parent
                 visible: GlobalState.expandedWidget !== null
