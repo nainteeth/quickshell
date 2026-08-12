@@ -12,9 +12,7 @@ ExpandablePill {
         color: Theme.textColor
         font.pixelSize: 14
         font.bold: true
-        text: {
-            text: "󰐥";
-        }
+        text: "󰐥"
     }
 
     expandedContent: Column {
@@ -23,6 +21,7 @@ ExpandablePill {
         Pill {
             id: poweroffPill
             onClicked: {
+                GlobalState.expandedWidget = null;
                 poweroffProcess.running = true;
             }
             Row {
@@ -43,6 +42,7 @@ ExpandablePill {
         Pill {
             id: rebootPill
             onClicked: {
+                GlobalState.expandedWidget = null;
                 rebootProcess.running = true;
             }
             Row {

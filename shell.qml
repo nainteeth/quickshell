@@ -97,6 +97,10 @@ ShellRoot {
                         Layout.alignment: Qt.AlignTop
                     }
 
+                    ThemeSwitcher {
+                        Layout.alignment: Qt.AlignTop
+                    }
+
                     Media {
                         Layout.alignment: Qt.AlignTop
                     }
@@ -117,10 +121,10 @@ ShellRoot {
                     anchors.right: parent.right
                     anchors.top: parent.top
 
-                    ThemeSwitcher {
+                    Networking {
                         Layout.alignment: Qt.AlignTop
                     }
-                    Networking {
+                    BluetoothWidget {
                         Layout.alignment: Qt.AlignTop
                     }
                     Battery {
