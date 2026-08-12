@@ -1,5 +1,5 @@
+pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Layouts
 import Quickshell.Services.SystemTray
 import ".."
 import "../components"
@@ -14,22 +14,24 @@ Pill {
             id: trayRepeater
             model: SystemTray.items
             MouseArea {
+                id: trayIconMouseArea
+                required property var modelData
                 width: Theme.trayIconSize
                 height: Theme.trayIconSize
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 Image {
-                    source: modelData.icon
+                    source: trayIconMouseArea.modelData.icon
                     width: Theme.trayIconSize
                     height: Theme.trayIconSize
                     sourceSize.width: Theme.trayIconSize
                     sourceSize.height: Theme.trayIconSize
                 }
-                onClicked: {
+                onClicked: function (mouse) {
                     if (mouse.button == Qt.LeftButton) {
                         modelData.activate();
                     } else if (mouse.button == Qt.RightButton) {
-                        var pos = mapToItem(panelWindow.contentItem, mouse.x, mouse.y);
-                        modelData.display(panelWindow, pos.x, pos.y);
+                        let pos = trayIconMouseArea.mapToItem(trayPill.panelWindow.contentItem, mouse.x, mouse.y);
+                        trayIconMouseArea.modelData.display(trayPill.panelWindow, pos.x, pos.y);
                     }
                 }
             }

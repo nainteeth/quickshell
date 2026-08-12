@@ -5,23 +5,19 @@ import "../components"
 
 Pill {
     id: clockPill
+
+    onClicked: {
+        Qt.openUrlExternally("https://calendar.google.com/calendar");
+        hyprctlProcess.running = true;
+    }
+
     Row {
-        MouseArea {
-            width: clockText.width
-            height: clockText.height
-
-            Text {
-                id: clockText
-                color: Theme.textColor
-                font.pixelSize: 14
-                font.bold: true
-                text: new Date().toLocaleString(Theme.locale, "ddd d MMM hh:mm")
-            }
-
-            onClicked: {
-                Qt.openUrlExternally("https://calendar.google.com/calendar");
-                hyprctlProcess.running = true;
-            }
+        Text {
+            id: clockText
+            color: Theme.textColor
+            font.pixelSize: 14
+            font.bold: true
+            text: new Date().toLocaleString(Theme.locale, "ddd d MMM hh:mm")
         }
 
         // Updates the clock

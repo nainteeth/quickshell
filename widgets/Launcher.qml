@@ -1,3 +1,6 @@
+// This allows you to use IDs from outer components in nested components
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell.Widgets
 import QtQuick.Controls
@@ -6,6 +9,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Wayland
+
 import ".."
 import "../components"
 
@@ -47,7 +51,7 @@ PanelWindow {
         command: ["python3", "/home/nainteeth/.config/quickshell/scripts/list-apps.py"]
         stdout: StdioCollector {
             onStreamFinished: {
-                appList = JSON.parse(text);
+                launcherWindow.appList = JSON.parse(text);
             }
         }
     }
@@ -91,8 +95,8 @@ PanelWindow {
                             forceActiveFocus()
 
                         onAccepted: {
-                            if (searchedApps.length > 0) {
-                                launchApp(searchedApps[0].exec);
+                            if (launcherWindow.searchedApps.length > 0) {
+                                launcherWindow.launchApp(launcherWindow.searchedApps[0].exec);
                                 GlobalState.launcherOpen = false;
                             }
                         }
@@ -137,28 +141,32 @@ PanelWindow {
                     id: appListView
                     anchors.fill: parent
                     clip: true
-                    model: searchedApps
+                    model: launcherWindow.searchedApps
                     spacing: 4
 
                     delegate: Pill {
+                        id: appPill
+                        required property var modelData
                         width: appListView.width
                         onClicked: {
-                            launchApp(modelData.exec);
+                            launcherWindow.launchApp(appPill.modelData.exec);
                             GlobalState.launcherOpen = false;
                         }
                         RowLayout {
                             spacing: 8
                             IconImage {
-                                source: Quickshell.iconPath(modelData.icon, true)
+                                source: Quickshell.iconPath(appPill.modelData.icon, true)
                                 implicitSize: 24
                             }
                             Text {
-                                text: modelData.name
+                                text: appPill.modelData.name
                                 color: Theme.textColor
 
-                                width: parent.width
                                 wrapMode: Text.WordWrap
+
+                                // idk why these work. Doesn't make sense in my head. But im too lazy to figure it out rn.
                                 Layout.alignment: Qt.AlignVCenter
+                                Layout.fillWidth: true
                             }
                         }
                     }

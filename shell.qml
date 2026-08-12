@@ -133,6 +133,9 @@ ShellRoot {
                         // so the context menu (right clicking a tray item) can be alligned
                         panelWindow: panelWindow
                     }
+                    PowerMenu {
+                        Layout.alignment: Qt.AlignTop
+                    }
                 }
             }
         }
