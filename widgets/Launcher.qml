@@ -6,7 +6,6 @@ import Quickshell.Widgets
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Wayland
 
@@ -22,10 +21,7 @@ PanelWindow {
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
     // Store all installed apps in an array
-    property var allApps: []
-
-    // This gives the path to the list-apps.py script, which is used to get the list of installed apps
-    readonly property string appListScriptPath: Qt.resolvedUrl("../scripts/list-apps.py").toString().replace("file://", "")
+    readonly property var allApps: DesktopEntries.applications.values
 
     // This filters the appList based on the search. It also checks the launch count of the apps and sorts them by that, so the most used apps are at the top.
     property var sortedSearchResults: { // This is one of the more complex things in this shell. Which is why there are a lot of comments
@@ -45,8 +41,8 @@ PanelWindow {
         unsortedSearchResults.sort((a, b) => {
             // This gets the launch count of the two apps being compared
             // You can check LauncherState.qml to see how the launch count is stored and retrieved. In short, it uses a JSON object in the settings.conf file to keep track of how many times each app has been launched.
-            let aCount = LauncherState.getLaunchCount(a.desktopFile);
-            let bCount = LauncherState.getLaunchCount(b.desktopFile);
+            let aCount = LauncherState.getLaunchCount(a.id);
+            let bCount = LauncherState.getLaunchCount(b.id);
 
             // If the launch counts are different, sort by launch count (descending). This works because of how the sort works. If the result is negative, a is sorted before b. If the result is positive, b is sorted before a. If the result is 0, the order of a and b is unchanged.
             if (aCount !== bCount)
@@ -78,24 +74,13 @@ PanelWindow {
         }
     }
 
-    // this grabs all the apps and puts them in an array
-    Process {
-        id: appListProcess
-        running: true
-        command: ["python3", launcherWindow.appListScriptPath]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                launcherWindow.allApps = JSON.parse(text);
-            }
-        }
-    }
-
     // this is a function to launch the given app
-    function launchApp(desktopFile) {
-        LauncherState.incrementLaunchCount(desktopFile);
+    function launchApp(desktopEntry) {
+        LauncherState.incrementLaunchCount(desktopEntry.id);
 
         Quickshell.execDetached({
-            command: ["gio", "launch", desktopFile]
+            command: ["gtk-launch", desktopEntry.id],
+            workingDirectory: desktopEntry.workingDirectory
         });
     }
 
@@ -131,26 +116,13 @@ PanelWindow {
                         // this is the function that is called when the user presses enter in the search field
                         onAccepted: {
                             if (launcherWindow.sortedSearchResults.length > 0) {
-                                launcherWindow.launchApp(launcherWindow.sortedSearchResults[0].desktopFile);
+                                launcherWindow.launchApp(launcherWindow.sortedSearchResults[0]);
                                 GlobalState.launcherOpen = false;
                             }
                         }
                         Keys.onEscapePressed: {
                             GlobalState.launcherOpen = false;
                         }
-                    }
-                }
-                Pill {
-                    id: reloadPill
-                    implicitHeight: searchPill.height
-                    Text {
-                        text: "󰑓"
-                        color: Theme.textColor
-                        font.pixelSize: 14
-                    }
-
-                    onClicked: {
-                        appListProcess.running = true;
                     }
                 }
             }
@@ -160,7 +132,7 @@ PanelWindow {
                 visible: implicitHeight > 0
                 clickable: false
                 border.width: 0
-                implicitWidth: searchPill.width + reloadPill.width + 4
+                implicitWidth: searchPill.width
                 // the math min caps the height of the results pill to 400, so it doesn't get too big
                 // it also hides the pill if the text field is empty
                 implicitHeight: searchField.text.trim().length > 0 ? Math.min(appListView.contentHeight, 400) : 0
@@ -184,7 +156,7 @@ PanelWindow {
                         required property var modelData
                         width: appListView.width
                         onClicked: {
-                            launcherWindow.launchApp(appPill.modelData.desktopFile);
+                            launcherWindow.launchApp(appPill.modelData);
                             GlobalState.launcherOpen = false;
                         }
                         RowLayout {
