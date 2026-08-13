@@ -28,19 +28,31 @@ PanelWindow {
     readonly property string appListScriptPath: Qt.resolvedUrl("../scripts/list-apps.py").toString().replace("file://", "")
 
     // This filters the appList based on the search. It also checks the launch count of the apps and sorts them by that, so the most used apps are at the top.
-    property var sortedSearchResults: {
+    property var sortedSearchResults: { // This is one of the more complex things in this shell. Which is why there are a lot of comments
+
+        // This takes the current search and makes it all lower case and removes any spaces at the start or the end.
         let query = searchField.text.toLowerCase().trim();
+
+        // If the search is empty, return all apps
         if (!query)
             return allApps;
 
+        // This filters the list of all apps to only include those that start with the search query. It also makes the search case insensitive by converting both the app name and the query to lower case.
         let unsortedSearchResults = allApps.filter(app => app.name.toLowerCase().startsWith(query));
+
+        // Then this filtered list is sorted by the launch count of the apps.
+        // The sort function does quite a bit in the background which is why you don't need to manually go over the list. Just explain how things should be compared by using a and b and everything else is handled by the sort function.
         unsortedSearchResults.sort((a, b) => {
+            // This gets the launch count of the two apps being compared
+            // You can check LauncherState.qml to see how the launch count is stored and retrieved. In short, it uses a JSON object in the settings.conf file to keep track of how many times each app has been launched.
             let aCount = LauncherState.getLaunchCount(a.desktopFile);
             let bCount = LauncherState.getLaunchCount(b.desktopFile);
 
+            // If the launch counts are different, sort by launch count (descending). This works because of how the sort works. If the result is negative, a is sorted before b. If the result is positive, b is sorted before a. If the result is 0, the order of a and b is unchanged.
             if (aCount !== bCount)
                 return bCount - aCount;
 
+            // If the launch counts are the same, sort by name (ascending)
             return a.name.localeCompare(b.name);
         });
 
