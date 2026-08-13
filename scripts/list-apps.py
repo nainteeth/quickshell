@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# WARNING: THIS SCRIPT IS VIBECODED. I REFUSE TO LEARN PYTHON FOR A SINGLE SCRIPT. THANKS.
+# WARNING: THIS SCRIPT IS VIBECODED. I REFUSE TO LEARN PYTHON FOR A SINGLE SCRIPT. THANKS. But i did read it. Its not that complex.
 import configparser
 import json
 import os
@@ -20,9 +20,11 @@ for directory in APP_DIRS:
         if not filename.endswith(".desktop"):
             continue
 
+        desktop_file = os.path.join(directory, filename)
+
         parser = configparser.ConfigParser(interpolation=None)
         try:
-            parser.read(os.path.join(directory, filename), encoding="utf-8")
+            parser.read(desktop_file, encoding="utf-8")
         except configparser.Error:
             continue
 
@@ -37,14 +39,13 @@ for directory in APP_DIRS:
             continue
 
         name = entry.get("Name")
-        exec_cmd = entry.get("Exec")
-        if not name or not exec_cmd:
+        if not name:
             continue
 
         apps.append(
             {
                 "name": name,
-                "exec": exec_cmd,
+                "desktopFile": desktop_file,
                 "icon": entry.get("Icon", ""),
             }
         )

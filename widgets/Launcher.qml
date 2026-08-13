@@ -18,15 +18,36 @@ PanelWindow {
     implicitWidth: launcherPill.width
     implicitHeight: searchPill.height + 8 + 400 + launcherPill.topPadding + launcherPill.bottomPadding
     color: "transparent"
+
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    property var appList: []
-    property var searchedApps: {
-        if (!searchField.text) {
-            return appList;
-        }
-        let query = searchField.text.toLowerCase();
-        return appList.filter(app => app.name.toLowerCase().includes(query));
+
+    // Store all installed apps in an array
+    property var allApps: []
+
+    // This gives the path to the list-apps.py script, which is used to get the list of installed apps
+    readonly property string appListScriptPath: Qt.resolvedUrl("../scripts/list-apps.py").toString().replace("file://", "")
+
+    // This filters the appList based on the search. It also checks the launch count of the apps and sorts them by that, so the most used apps are at the top.
+    property var sortedSearchResults: {
+        let query = searchField.text.toLowerCase().trim();
+        if (!query)
+            return allApps;
+
+        let unsortedSearchResults = allApps.filter(app => app.name.toLowerCase().startsWith(query));
+        unsortedSearchResults.sort((a, b) => {
+            let aCount = LauncherState.getLaunchCount(a.desktopFile);
+            let bCount = LauncherState.getLaunchCount(b.desktopFile);
+
+            if (aCount !== bCount)
+                return bCount - aCount;
+
+            return a.name.localeCompare(b.name);
+        });
+
+        return unsortedSearchResults;
     }
+
+    // This grabs focus.
     HyprlandFocusGrab {
         active: true
         windows: [launcherWindow]
@@ -34,6 +55,7 @@ PanelWindow {
             GlobalState.launcherOpen = false;
         }
     }
+
     MouseArea {
         anchors.top: launcherPill.bottom
         anchors.left: parent.left
@@ -48,23 +70,23 @@ PanelWindow {
     Process {
         id: appListProcess
         running: true
-        command: ["python3", "/home/nainteeth/.config/quickshell/scripts/list-apps.py"]
+        command: ["python3", launcherWindow.appListScriptPath]
         stdout: StdioCollector {
             onStreamFinished: {
-                launcherWindow.appList = JSON.parse(text);
+                launcherWindow.allApps = JSON.parse(text);
             }
         }
     }
-    function launchApp(execString) {
-        // Welcome to the most cursed function ever.
-        // Desktop entrys have weird exec strings
-        let cleaned = execString.replace(/%[fFuUick%]/g, "").trim();
-        let parts = cleaned.split(" ").filter(p => p.length > 0);
+
+    // this is a function to launch the given app
+    function launchApp(desktopFile) {
+        LauncherState.incrementLaunchCount(desktopFile);
 
         Quickshell.execDetached({
-            command: parts
+            command: ["gio", "launch", desktopFile]
         });
     }
+
     Pill {
         id: launcherPill
         clickable: false
@@ -94,9 +116,10 @@ PanelWindow {
                         onVisibleChanged: if (visible)
                             forceActiveFocus()
 
+                        // this is the function that is called when the user presses enter in the search field
                         onAccepted: {
-                            if (launcherWindow.searchedApps.length > 0) {
-                                launcherWindow.launchApp(launcherWindow.searchedApps[0].exec);
+                            if (launcherWindow.sortedSearchResults.length > 0) {
+                                launcherWindow.launchApp(launcherWindow.sortedSearchResults[0].desktopFile);
                                 GlobalState.launcherOpen = false;
                             }
                         }
@@ -137,11 +160,11 @@ PanelWindow {
                     }
                 }
 
-                ListView {
+                ListView { // This lists the apps that match the search query
                     id: appListView
                     anchors.fill: parent
                     clip: true
-                    model: launcherWindow.searchedApps
+                    model: launcherWindow.sortedSearchResults
                     spacing: 4
 
                     delegate: Pill {
@@ -149,7 +172,7 @@ PanelWindow {
                         required property var modelData
                         width: appListView.width
                         onClicked: {
-                            launcherWindow.launchApp(appPill.modelData.exec);
+                            launcherWindow.launchApp(appPill.modelData.desktopFile);
                             GlobalState.launcherOpen = false;
                         }
                         RowLayout {
