@@ -6,14 +6,18 @@ import "../components"
 Pill {
     id: mediaPill
 
+    readonly property var players: Mpris.players.values
+
     // This goes through the list of MPRIS players and returns the first one that is currently playing.
     // If none are playing, it returns the first player in the list, or null if there are no players.
     readonly property var activePlayer: {
-        for (let i = 0; i < Mpris.players.length; i++) {
-            if (Mpris.players[i].isPlaying)
-                return Mpris.players[i];
-        }
-        return Mpris.players.length > 0 ? Mpris.players[0] : null;
+        let playingPlayer = mediaPill.players.find(player => player.isPlaying);
+        // If a player is playing, return that player.
+        if (playingPlayer)
+            return playingPlayer;
+        else
+            // Otherwise, return the first player in the list, or null if there are no players.
+            return mediaPill.players[0] ?? null;
     }
 
     // hides pill if there are no players available

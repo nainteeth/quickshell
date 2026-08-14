@@ -77,11 +77,7 @@ PanelWindow {
     // this is a function to launch the given app
     function launchApp(desktopEntry) {
         LauncherState.incrementLaunchCount(desktopEntry.id);
-
-        Quickshell.execDetached({
-            command: ["gtk-launch", desktopEntry.id],
-            workingDirectory: desktopEntry.workingDirectory
-        });
+        desktopEntry.execute();
     }
 
     Pill {

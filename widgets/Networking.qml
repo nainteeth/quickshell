@@ -1,16 +1,35 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell.Io
+import Quickshell.Networking as QSNet
 import ".."
 import "../components"
 
 ExpandablePill {
-    id: networkPill
-    visible: !ethernetConnected
+    id: root
+    visible: !root.ethernetConnected
 
-    property var activeNetworkSSID: "Not connected"
-    property int activeNetworkSignalStrength: 0
-    property var ethernetConnected: false
+    // The devices are things like your wifi card or your wired ethernet port
+    readonly property var networkDevices: QSNet.Networking.devices.values
+    readonly property var wifiDevice: root.networkDevices.find(device => device.type === QSNet.DeviceType.Wifi) ?? null
+    readonly property var wiredDevice: root.networkDevices.find(device => device.type === QSNet.DeviceType.Wired) ?? null
+    readonly property var activeWifiNetwork: root.wifiDevice ? root.wifiDevice.networks.values.find(network => network.connected) ?? null : null
+    readonly property string activeNetworkSSID: root.activeWifiNetwork ? root.activeWifiNetwork.name : "Not connected"
+    readonly property int activeNetworkSignalStrength: root.activeWifiNetwork ? Math.round(root.activeWifiNetwork.signalStrength * 100) : 0
+    readonly property bool ethernetConnected: root.wiredDevice?.network?.connected ?? false
+
+    function networkSignalIcon() {
+        let signal = root.activeNetworkSignalStrength;
+        if (signal >= 80)
+            return "󰣺";
+        if (signal >= 60)
+            return "󰣸";
+        if (signal >= 40)
+            return "󰣶";
+        if (signal >= 20)
+            return "󰣴";
+        return "󰣽";
+    }
 
     collapsedContent: Row {
         spacing: 6
@@ -20,18 +39,7 @@ ExpandablePill {
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
-            text: {
-                let signal = networkPill.activeNetworkSignalStrength;
-                if (signal >= 80)
-                    return "󰣺";
-                if (signal >= 60)
-                    return "󰣸";
-                if (signal >= 40)
-                    return "󰣶";
-                if (signal >= 20)
-                    return "󰣴";
-                return "󰣽";
-            }
+            text: root.networkSignalIcon()
         }
 
         Text {
@@ -39,7 +47,7 @@ ExpandablePill {
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
-            text: networkPill.activeNetworkSSID
+            text: root.activeNetworkSSID
         }
     }
 
@@ -50,7 +58,7 @@ ExpandablePill {
             id: expNetworkText
             color: Theme.textColor
             font.pixelSize: 14
-            text: "Connected to: " + networkPill.activeNetworkSSID
+            text: "Connected to: " + root.activeNetworkSSID
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -68,56 +76,12 @@ ExpandablePill {
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
-
-                Process {
-                    id: nmtuiProcess
-                    command: ["ghostty", "-e", "nmtui"]
-                }
             }
         }
 
         Process {
-            id: networkProcess
-            running: true
-            command: ["env", "LC_ALL=C", "nmcli", "-t", "-f", "active,ssid,signal", "dev", "wifi", "list"]
-            stdout: StdioCollector {
-                onStreamFinished: {
-                    let lines = text.split("\n");
-                    let activeLine = lines.find(line => line.startsWith("yes:"));
-                    if (activeLine) {
-                        let parts = activeLine.split(":");
-                        networkPill.activeNetworkSSID = parts[1];
-                        networkPill.activeNetworkSignalStrength = parseInt(parts[2]);
-                    } else {
-                        networkPill.activeNetworkSSID = "Not connected";
-                        networkPill.activeNetworkSignalStrength = 0;
-                    }
-                }
-            }
-        }
-
-        Process {
-            id: ethernetProcess
-            running: true
-            command: ["env", "LC_ALL=C", "nmcli", "-t", "-f", "TYPE,STATE", "dev"]
-            stdout: StdioCollector {
-                onStreamFinished: {
-                    let lines = text.split("\n");
-                    // Check if any line indicates that ethernet is connected
-                    // some() returns true or false
-                    networkPill.ethernetConnected = lines.some(line => line.startsWith("ethernet:connected"));
-                }
-            }
-        }
-
-        Timer {
-            interval: 5000
-            running: true
-            repeat: true
-            onTriggered: {
-                networkProcess.running = true;
-                ethernetProcess.running = true;
-            }
+            id: nmtuiProcess
+            command: ["ghostty", "-e", "nmtui"]
         }
     }
 }

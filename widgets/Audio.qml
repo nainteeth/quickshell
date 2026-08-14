@@ -11,16 +11,16 @@ import "../components"
 // TODO: Add a selection of the input and output device
 // TODO: Add a input device volume slider
 ExpandablePill {
-    id: audioPill
+    id: root
 
-    property var volumePercentage: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100) + "%"
+    readonly property int volumePercentage: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100)
 
-    function volumeIcon(volume) {
-        if (volume === 0)
+    function volumeIcon() {
+        if (volumePercentage === 0)
             return "󰖁";
-        if (volume < 0.5)
+        if (volumePercentage < 50)
             return "󰕿";
-        if (volume < 0.8)
+        if (volumePercentage < 80)
             return "󰖀";
         return "󰕾";
     }
@@ -33,7 +33,7 @@ ExpandablePill {
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
-            text: volumePercentage
+            text: root.volumePercentage + "%"
         }
 
         // Selects the appropriate icon based on the current volume level.
@@ -42,7 +42,7 @@ ExpandablePill {
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
-            text: volumeIcon(Pipewire.defaultAudioSink?.audio.volume ?? 0);
+            text: root.volumeIcon()
         }
     }
 
@@ -55,7 +55,7 @@ ExpandablePill {
             color: Theme.textColor
             font.pixelSize: 14
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Global Volume: " + volumePercentage
+            text: "Global Volume: " + root.volumePercentage + "%"
         }
 
         // Forces UI updates when the Pipewire sink changes externally.
