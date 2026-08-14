@@ -17,9 +17,9 @@ ExpandablePill {
     readonly property string activeNetworkSSID: root.activeWifiNetwork ? root.activeWifiNetwork.name : "Not connected"
     readonly property int activeNetworkSignalStrength: root.activeWifiNetwork ? Math.round(root.activeWifiNetwork.signalStrength * 100) : 0
     readonly property bool ethernetConnected: root.wiredDevice?.network?.connected ?? false
+    readonly property var availableWifiNetworks: wifiDevice ? wifiDevice.networks.values : []
 
-    function networkSignalIcon() {
-        let signal = root.activeNetworkSignalStrength;
+    function networkSignalIcon(signal) {
         if (signal >= 80)
             return "󰣺";
         if (signal >= 60)
@@ -39,7 +39,7 @@ ExpandablePill {
             color: Theme.textColor
             font.pixelSize: 14
             font.bold: true
-            text: root.networkSignalIcon()
+            text: root.networkSignalIcon(root.activeNetworkSignalStrength)
         }
 
         Text {
@@ -52,6 +52,7 @@ ExpandablePill {
     }
 
     expandedContent: Column {
+        id: expContent
         spacing: 12
 
         Text {
@@ -62,6 +63,41 @@ ExpandablePill {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
+        // TODO: Fix this
+        ListView {
+            id: wifiNetworks
+            width: 200
+            implicitHeight: contentHeight
+            model: root.availableWifiNetworks
+
+            delegate: Pill {
+                id: wifiPill
+                required property var modelData
+                // color: {
+                //     if (modelData.name.connected) {
+                //         Theme.inactiveTextColor;
+                //     }
+                // }
+                width: expContent.width
+                onClicked: {
+                    if (wifiPill.modelData.connected) {
+                        wifiPill.modelData.disconnect();
+                    } else {
+                        wifiPill.modelData.connect();
+                    }
+                }
+                Text {
+                    text: wifiPill.modelData.name + "  " + root.networkSignalIcon(wifiPill.modelData.name.signalStrength * 100)
+                    color: Theme.textColor
+                }
+
+                // Component.onCompleted: {
+                //     wifiPill.modelData.connectionFailed();
+                // }
+            }
+        }
+
+        // NMTui Button:
         Pill {
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: nmtuiProcess.running = true
