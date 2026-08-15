@@ -44,26 +44,29 @@ ShellRoot {
                 right: true
             }
 
-            implicitHeight: 1000 // height reserved for widgets
+            implicitHeight: 10000 // height reserved for widgets. Effectively the entire screen
             exclusiveZone: Theme.barHeight + 8 // height for the actual bar. 8 is the top margin of the bar
             // TODO: Add a variable for the above hardcoded margin
             color: "transparent" // background color
 
             // Define the clickable area of the window
-            // This is needed because the implicitHeight of the bar is larger than the actual bar
-            // Without this you wouldn't be able to click on any applications that reside below the implicitHeight
-            // If the implicitHeight of the bar is larger than the actual bar you can extend widgets within
-            // the implicitHeight. Otherwise they would be cut off.
+            // This is needed because the implicitHeight of the bar is larger than the actual bar. Without this you wouldn't be able to click on any applications that reside below the implicitHeight. If the implicitHeight of the bar is larger than the actual bar you can extend widgets within the implicitHeight. Otherwise they would be cut off. If a widget is expanded the size of the mask is the reserved space for widgets. If it isnt expanded the mask is the size of the bar. If the mask was always the reserved space then you wouldnt be able to click anything except the shell
             mask: Region {
-                item: barRow
+                item: GlobalState.expandedWidget !== null ? expandedMaskItem : barRow
+            }
+            Item {
+                id: expandedMaskItem
+                anchors.fill: parent
+                visible: false
             }
 
             // Invisible background overlay that activates only when a widget is expanded. Clicking anywhere on this empty space will close the currently expanded widget. z: -1 pushes it to the very bottom of the visual stack, ensuring that if you click on the widget itself, the widget intercepts the click first.
             MouseArea {
                 anchors.fill: parent
                 visible: GlobalState.expandedWidget !== null
+                enabled: visible
                 onClicked: GlobalState.expandedWidget = null
-                z: -1  // magic
+                z: 0
             }
 
             // Add the notification widget
@@ -71,6 +74,7 @@ ShellRoot {
 
             Item { // This is the actual bar
                 id: barRow
+                z: 1
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right

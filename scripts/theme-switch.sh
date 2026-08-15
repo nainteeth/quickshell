@@ -31,7 +31,12 @@ esac
 gsettings set org.gnome.desktop.interface color-scheme "$COLOR_SCHEME"
 gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME"
 
+
 # This refreshes the ghostty theme
 pkill -SIGUSR2 ghostty || true
+
+# Reload hyprland config
+# My hyprland config reads the contents of settings.conf for theming
+hyprctl reload
 
 echo "Theme switched to: $THEME"

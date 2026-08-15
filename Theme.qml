@@ -60,7 +60,7 @@ Item {
     // This assigns the currently selected theme object to a property so that the shell can read the colors from it. This is used in the shell to style all the widgets and stuff. For example: You can now access the text color of the currently selected theme with Theme.currentTheme.textColor. Very nice!
     readonly property var currentTheme: themes[settings.themeName]
 
-    readonly property bool isDark: currentTheme.isDark
+    property bool isDark: currentTheme.isDark
     // nice readable name for stuff like the theme switcher pill
     readonly property string themeDisplayName: currentTheme.name
 

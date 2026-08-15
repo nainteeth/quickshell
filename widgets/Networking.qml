@@ -72,23 +72,33 @@ ExpandablePill {
 
             delegate: Pill {
                 id: wifiPill
+                property bool showPassword: false
+                property string password: ""
+                property bool isSecure: (modelData.securityType ?? "") !== ""
                 required property var modelData
-                // color: {
-                //     if (modelData.name.connected) {
-                //         Theme.inactiveTextColor;
-                //     }
-                // }
+                color: modelData.connected ? Theme.hoverBackgroundColor : Theme.backgroundColor
                 width: expContent.width
                 onClicked: {
                     if (wifiPill.modelData.connected) {
                         wifiPill.modelData.disconnect();
-                    } else {
-                        wifiPill.modelData.connect();
-                    }
+                    } else if (wifiPill.modelData.disconnected && isSecure) {
+                        showPassword = true;
+                    } else
+                        (wifiPill.modelData.connect());
                 }
-                Text {
-                    text: wifiPill.modelData.name + "  " + root.networkSignalIcon(wifiPill.modelData.name.signalStrength * 100)
-                    color: Theme.textColor
+                Row {
+                    Text {
+                        text: (wifiPill.modelData.connected ? "󰄬 " : "") + wifiPill.modelData.name + "  " + root.networkSignalIcon(Math.round(wifiPill.modelData.signalStrength * 100))
+                        color: wifiPill.modelData.connected ? Theme.textColor : Theme.inactiveTextColor
+                        font.bold: wifiPill.modelData.connected
+                    }
+                    Pill {
+                        id: passwortPill
+                        visible: wifiPill.showPassword
+                        Text {
+                            text: "This wifi needs a password"
+                        }
+                    }
                 }
 
                 // Component.onCompleted: {
