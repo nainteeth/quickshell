@@ -18,6 +18,7 @@ PanelWindow {
     implicitHeight: searchPill.height + 8 + 400 + launcherPill.topPadding + launcherPill.bottomPadding
     color: "transparent"
 
+    screen: Quickshell.screens.primary
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
     // Store all installed apps in an array

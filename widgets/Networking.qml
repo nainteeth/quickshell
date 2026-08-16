@@ -7,7 +7,7 @@ import "../components"
 
 ExpandablePill {
     id: root
-    visible: !root.ethernetConnected
+    // visible: !root.ethernetConnected
 
     // The devices are things like your wifi card or your wired ethernet port
     readonly property var networkDevices: QSNet.Networking.devices.values

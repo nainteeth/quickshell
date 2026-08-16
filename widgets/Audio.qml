@@ -13,7 +13,7 @@ import "../components"
 ExpandablePill {
     id: root
 
-    readonly property int volumePercentage: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100)
+    readonly property int volumePercentage: Math.round((Pipewire.defaultAudioSink?.audio.volume) * 100)
 
     function volumeIcon() {
         if (volumePercentage === 0)

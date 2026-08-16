@@ -44,7 +44,7 @@ ShellRoot {
                 right: true
             }
 
-            implicitHeight: 10000 // height reserved for widgets. Effectively the entire screen
+            implicitHeight: modelData.height // height reserved for widgets. The entire screen
             exclusiveZone: Theme.barHeight + 8 // height for the actual bar. 8 is the top margin of the bar
             // TODO: Add a variable for the above hardcoded margin
             color: "transparent" // background color
