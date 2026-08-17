@@ -7,7 +7,7 @@ import "../components"
 ExpandablePill {
     id: powerMenuPill
 
-    collapsedContent: Text {
+    collapsedItem: Text {
         id: powerIcon
         color: Theme.textColor
         font.pixelSize: 14
@@ -15,14 +15,13 @@ ExpandablePill {
         text: "󰐥"
     }
 
-    expandedContent: Column {
+    expandedItem: Column {
         spacing: 12
 
         Pill {
             id: poweroffPill
             onClicked: {
-                GlobalState.expandedWidget = null;
-                poweroffProcess.running = true;
+                                poweroffProcess.running = true;
             }
             Row {
                 Text {
@@ -42,8 +41,7 @@ ExpandablePill {
         Pill {
             id: rebootPill
             onClicked: {
-                GlobalState.expandedWidget = null;
-                rebootProcess.running = true;
+                                rebootProcess.running = true;
             }
             Row {
                 Text {

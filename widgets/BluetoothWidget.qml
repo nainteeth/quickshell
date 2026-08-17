@@ -14,7 +14,7 @@ ExpandablePill {
     // This filters the connected devices from the devices list
     readonly property var connectedDevices: Bluetooth.devices.values.filter(device => device.connected)
 
-    collapsedContent: Row {
+    collapsedItem: Row {
         spacing: 6
 
         Text {
@@ -40,7 +40,7 @@ ExpandablePill {
         }
     }
 
-    expandedContent: Column {
+    expandedItem: Column {
         id: expandedBluetoothView
         spacing: 12
 
@@ -74,8 +74,7 @@ ExpandablePill {
         Pill {
             anchors.horizontalCenter: expandedBluetoothView.horizontalCenter
             onClicked: {
-                GlobalState.expandedWidget = null;
-                bluetoothSettingsProcess.running = true;
+                                bluetoothSettingsProcess.running = true;
             }
 
             Row {

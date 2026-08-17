@@ -25,7 +25,7 @@ ExpandablePill {
         return "󰕾";
     }
 
-    collapsedContent: Row {
+    collapsedItem: Row {
         spacing: 6
 
         Text {
@@ -48,7 +48,7 @@ ExpandablePill {
 
     // Expanded view with volume control and a button to open pavucontrol.
     // Outsourcing work! Yippie!
-    expandedContent: Column {
+    expandedItem: Column {
         spacing: 6
 
         Text {

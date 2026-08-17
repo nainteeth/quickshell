@@ -41,7 +41,7 @@ ExpandablePill {
         }
     }
 
-    collapsedContent: Row {
+    collapsedItem: Row {
         spacing: 6
 
         Text {
@@ -59,7 +59,7 @@ ExpandablePill {
         }
     }
 
-    expandedContent: Column {
+    expandedItem: Column {
         spacing: 6
 
         Row {

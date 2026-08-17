@@ -69,6 +69,7 @@ Control { // Read: https://doc.qt.io/qt-6/qml-qtquick-controls-control.html#deta
             anchors.fill: parent
             enabled: root.clickable
             cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
             onClicked: {
                 root.clicked();
             }

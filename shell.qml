@@ -47,7 +47,7 @@ ShellRoot {
             implicitHeight: modelData.height // height reserved for widgets. The entire screen
             exclusiveZone: Theme.barHeight + 8 // height for the actual bar. 8 is the top margin of the bar
             // TODO: Add a variable for the above hardcoded margin
-            color: "transparent" // background color
+            color: "transparent"
 
             // Define the clickable area of the window
             // This is needed because the implicitHeight of the bar is larger than the actual bar. Without this you wouldn't be able to click on any applications that reside below the implicitHeight. If the implicitHeight of the bar is larger than the actual bar you can extend widgets within the implicitHeight. Otherwise they would be cut off. If a widget is expanded the size of the mask is the reserved space for widgets. If it isnt expanded the mask is the size of the bar. If the mask was always the reserved space then you wouldnt be able to click anything except the shell

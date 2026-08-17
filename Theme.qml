@@ -28,7 +28,7 @@ Item {
                 textColor: "#000000",
                 inactiveTextColor: "#6b6b6b",
                 backgroundBaseColor: "#ffffff",
-                borderColor: "#d1d1d1",
+                borderColor: "#45475a",
                 hoverBackgroundBaseColor: "#f2f2f2"
             },
             "catppuccin-dark": {
@@ -37,7 +37,7 @@ Item {
                 textColor: "#cdd6f4",
                 inactiveTextColor: "#6c7086",
                 backgroundBaseColor: "#1e1e2e",
-                borderColor: "#45475a",
+                borderColor: "00000000",
                 hoverBackgroundBaseColor: "#313244"
             },
             "catppuccin-light": {
@@ -46,13 +46,22 @@ Item {
                 textColor: "#4c4f69",
                 inactiveTextColor: "#8c8fa1",
                 backgroundBaseColor: "#eff1f5",
-                borderColor: "#bcc0cc",
+                borderColor: "00000000",
                 hoverBackgroundBaseColor: "#e6e9ef"
+            },
+            "adwaita-dark": {
+                name: "Adwaita Dark",
+                isDark: true,
+                textColor: "#ffffff",
+                inactiveTextColor: "#9a9996",
+                backgroundBaseColor: "#303030",
+                borderColor: "#4a4a4a",
+                hoverBackgroundBaseColor: "#3a3a3a"
             }
         })
 
     // this is used by the theme switcher as the repeaters model to show a button for each theme
-    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light"]
+    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light", "adwaita-dark"]
 
     // exposes the saved theme name on the root object. This is needed because the stuff in the settings object is not accessable from outside this file
     property alias themeName: settings.themeName

@@ -2,68 +2,110 @@ import QtQuick
 import QtQuick.Layouts
 import ".."
 
-// Base component for widgets that expand when clicked.
-// Widgets using this must define collapsedContent and expandedContent
+// Base component for widgets that expand on hover.
+// Widgets using this must define collapsedItem and expandedItem.
 // This component uses Pill as a base.
 Pill {
     id: root
 
-    // Content shown when collapsed
-    required property Component collapsedContent
-    // Content shown when expanded
-    required property Component expandedContent
+    // Content shown when collapsed/expanded.
+    required property Item collapsedItem
+    required property Item expandedItem
 
     // Disables hover color when expanded.
     useHoverColor: !isExpanded
 
-    // Checks if this widget itself is active in the global state.
-    readonly property bool isExpanded: GlobalState.expandedWidget === root
+    // Hover-driven expansion.
+    readonly property bool isExpanded: root.hovered
 
     // This prevents the pills content to clip outside the pill during the animation.
     // It is needed since the pills content updates instantly while the pill itself needs time for the animation.
     clip: true
 
-    // The contentItem is the Item (any object) that is inside the pill
     contentItem: Item {
-        // These lines adjust the size of the content based on te current state.
-        // This also resizes the Pill itself since the size of the pill adjusts to its content
-        implicitWidth: root.isExpanded ? expandedLoader.implicitWidth : collapsedLoader.implicitWidth
-        implicitHeight: root.isExpanded ? expandedLoader.implicitHeight : collapsedLoader.implicitHeight
+        implicitWidth: root.isExpanded ? expandedItemWrap.implicitWidth : collapsedItemWrap.implicitWidth
+        implicitHeight: root.isExpanded ? expandedItemWrap.implicitHeight : collapsedItemWrap.implicitHeight
 
-        // The loaders are used to load/render the pill based on the current state. What they actually create is based on the sourceComponent which is received from the specific widget.
-        Loader {
-            id: collapsedLoader
+        Item { // This is a wrapper for the collapsed item. It is needed to animate the scale and opacity of the collapsed item without affecting the expanded item.
+            id: collapsedItemWrap
             anchors.centerIn: parent
-            visible: !root.isExpanded
-            // The sourceComponent looks at the required collapsedContent property of the specific widget and loads it into the loader.
-            sourceComponent: root.collapsedContent
+            implicitWidth: collapsedContainer.implicitWidth
+            implicitHeight: collapsedContainer.implicitHeight
+            opacity: root.isExpanded ? 0 : 1
+            scale: root.isExpanded ? 0.96 : 1.0
+            visible: opacity > 0.01
+            transformOrigin: Item.Center
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 400
+                    easing.type: Easing.InOutCubic
+                }
+            }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 160
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
+            Item {
+                id: collapsedContainer
+                implicitWidth: root.collapsedItem ? root.collapsedItem.implicitWidth : 0
+                implicitHeight: root.collapsedItem ? root.collapsedItem.implicitHeight : 0
+                Component.onCompleted: {
+                    if (root.collapsedItem)
+                        root.collapsedItem.parent = collapsedContainer;
+                }
+            }
         }
 
-        Loader {
-            id: expandedLoader
+        Item { // Another wrapper for the expanded item. It is needed to animate the scale and opacity of the expanded item without affecting the collapsed item.
+            id: expandedItemWrap
             anchors.centerIn: parent
-            visible: root.isExpanded
-            // Same thing as above but for the expandedContent property.
-            sourceComponent: root.expandedContent
+            implicitWidth: expandedContainer.implicitWidth
+            implicitHeight: expandedContainer.implicitHeight
+            transformOrigin: Item.Center
+            scale: root.isExpanded ? 1.0 : 0.96
+            opacity: root.isExpanded ? 1.0 : 0.0
+            visible: opacity > 0.01
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.InOutCubic
+                }
+            }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
+            Item {
+                id: expandedContainer
+                implicitWidth: root.expandedItem ? root.expandedItem.implicitWidth : 0
+                implicitHeight: root.expandedItem ? root.expandedItem.implicitHeight : 0
+                Component.onCompleted: {
+                    if (root.expandedItem)
+                        root.expandedItem.parent = expandedContainer;
+                }
+            }
         }
     }
 
     // Animation speed and curve for size changes.
     Behavior on implicitHeight {
         NumberAnimation {
-            duration: 200
+            duration: 300
             easing.type: Easing.InOutCubic
         }
     }
     Behavior on implicitWidth {
         NumberAnimation {
-            duration: 200
+            duration: 300
             easing.type: Easing.InOutCubic
         }
-    }
-
-    // Toggles the global expanded state. This Singleton stores the expanded widget directly and can only store a single widget at a time. Therefore if you expand a widget while another one is already expanded, it gets overwritten and the first widget closes. This is intended behaviour so you don't have to manually close all the widgets you expand.
-    onClicked: {
-        GlobalState.expandedWidget = isExpanded ? null : root;
     }
 }
