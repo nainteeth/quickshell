@@ -9,7 +9,7 @@ ExpandablePill {
     id: themePill
     Layout.alignment: Qt.AlignTop
 
-    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light", "adwaita-dark"]
+    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light", "adwaita-dark", "compline-dark", "lauds-light"]
 
     collapsedItem: Row {
         spacing: 6
@@ -38,7 +38,7 @@ ExpandablePill {
             Theme.setTheme(themeName);
             themeProcess.command = [themeScriptPath, themeName];
             themeProcess.running = true;
-                    }
+        }
 
         Text {
             color: Theme.textColor

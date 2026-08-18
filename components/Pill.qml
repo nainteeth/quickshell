@@ -54,7 +54,7 @@ Control { // Read: https://doc.qt.io/qt-6/qml-qtquick-controls-control.html#deta
         // small windows/terminals themselves
         radius: 12
         border.color: Theme.borderColor
-        border.width: 1
+        border.width: 0
 
         // Hover color transition speed.
         Behavior on color {

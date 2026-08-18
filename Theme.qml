@@ -18,7 +18,7 @@ Item {
                 isDark: true,
                 textColor: "#ffffff",
                 inactiveTextColor: "#9a9996",
-                backgroundBaseColor: "#1e1e1e",
+                backgroundBaseColor: "#000000",
                 borderColor: "#383838",
                 hoverBackgroundBaseColor: "#303030"
             },
@@ -57,11 +57,29 @@ Item {
                 backgroundBaseColor: "#303030",
                 borderColor: "#4a4a4a",
                 hoverBackgroundBaseColor: "#3a3a3a"
+            },
+            "compline-dark": {
+                name: "Compline",
+                isDark: true,
+                textColor: "#f0efeb",
+                inactiveTextColor: "#ccc4b4",
+                backgroundBaseColor: "#1a1d21",
+                borderColor: "#f0efeb",
+                hoverBackgroundBaseColor: "#515761"
+            },
+            "lauds-light": {
+                name: "Lauds",
+                isDark: false,
+                textColor: "#1a1d21",
+                inactiveTextColor: "#4a4d51",
+                backgroundBaseColor: "#f0efeb",
+                borderColor: "#1a1d21",
+                hoverBackgroundBaseColor: "#7d7a75"
             }
         })
 
     // this is used by the theme switcher as the repeaters model to show a button for each theme
-    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light", "adwaita-dark"]
+    readonly property var themeNames: ["dark", "light", "catppuccin-dark", "catppuccin-light", "adwaita-dark", "compline-dark", "lauds-light"]
 
     // exposes the saved theme name on the root object. This is needed because the stuff in the settings object is not accessable from outside this file
     property alias themeName: settings.themeName
